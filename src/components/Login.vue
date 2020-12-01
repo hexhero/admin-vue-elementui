@@ -57,7 +57,7 @@ export default {
       this.$refs.form.validate(async (valid) => {
         if (!valid) return
         const { data } = await this.$http.post(
-          '/mall-api/api/auth/login',
+          '/api/auth/login',
           this.form
         )
 
@@ -68,7 +68,7 @@ export default {
             2. 跳转到 Home 页面
             */
         this.$message.success('登陆成功!')
-        window.sessionStorage.setItem('Authentication', data.data.token)
+        window.sessionStorage.setItem('token', data.data.token)
         this.$router.push('/home')
       })
     },

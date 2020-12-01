@@ -7,6 +7,8 @@ import Router from 'vue-router'
 
 import Login from '@/components/Login.vue'
 import Home from '@/components/Home.vue'
+import Welcome from '@/components/Welcome.vue'
+import Users from '@/components/user/Users.vue'
 
 Vue.use(Router)
 
@@ -15,7 +17,15 @@ const router = new Router({
     routes:[
         {path:'/', redirect:'/login'},
         {path:'/login',component: Login},
-        {path:'/home',component: Home}
+        {
+            path:'/home',
+            component: Home,
+            redirect:'/welcome',
+            children:[
+                {path:'/welcome',component: Welcome},
+                {path:'/users',component: Users}
+            ]
+        }
     ]
 })
 
@@ -29,7 +39,7 @@ router.beforeEach((to, from, next) => {
     // 如果是登陆页, 放行
     if(to.path === '/login') return next();
     // 获取授权码
-    const authentication = window.sessionStorage.getItem('Authentication')
+    const authentication = window.sessionStorage.getItem('token')
     // 没有授权吗, 跳转到登陆页
     if(!authentication) return next('/login');
     // 有授权码, 放行

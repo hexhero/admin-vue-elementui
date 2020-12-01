@@ -6,7 +6,12 @@ import './assets/css/global.css'
 import './assets/css/font/iconfont.css'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:9000/'
+axios.defaults.baseURL = 'http://localhost:9000/mall-api/'
+axios.interceptors.request.use(config => {
+  // 网络请求预处理, 添加 Authorization 验证请求头.
+  config.headers.Authorization = window.sessionStorage.getItem('token')
+  return config
+})
 
 Vue.prototype.$http = axios
 
