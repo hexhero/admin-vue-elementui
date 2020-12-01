@@ -1,19 +1,3 @@
 # mall-manager
 
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+后段项目仓库地址: https://github.com/yangb92/spring-boot-tycoon/tree/jwt-authentication
