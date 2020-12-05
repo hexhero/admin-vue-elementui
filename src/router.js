@@ -5,10 +5,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Login from '@/components/Login.vue'
-import Home from '@/components/Home.vue'
-import Welcome from '@/components/Welcome.vue'
-import Users from '@/components/user/Users.vue'
+const Login = () => import('./components/Login.vue')
+const Home = () => import('./components/Home.vue')
+const Welcome = () => import('./components/Welcome.vue')
+
+
+const Users = () => import('./components/user/Users.vue')
+const Permissions = () => import('./components/authority/Permissions.vue')
+const Roles = () => import('./components/authority/Roles.vue')
 
 Vue.use(Router)
 
@@ -23,7 +27,9 @@ const router = new Router({
             redirect:'/welcome',
             children:[
                 {path:'/welcome',component: Welcome},
-                {path:'/users',component: Users}
+                {path:'/users',component: Users},
+                {path:'/permissions',component: Permissions},
+                {path:'/roles',component: Roles},
             ]
         }
     ]

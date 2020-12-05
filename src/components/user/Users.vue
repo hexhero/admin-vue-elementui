@@ -70,6 +70,7 @@
                 type="warning"
                 icon="el-icon-setting"
                 size="mini"
+                @click="showRoleDialog(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -80,7 +81,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryParam.pageNum"
-        :page-sizes="[2, 5, 10, 20]"
+        :page-sizes="[5, 10, 20]"
         :page-size="queryParam.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -149,6 +150,33 @@
         <el-button type="primary" @click="editUser">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 分配角色对话框 -->
+    <el-dialog title="分配角色" :visible.sync="roleDialogVisible" width="30%">
+      <div>
+        <p>用户姓名: {{ roleInfo.fullname }}</p>
+        <p>
+          用户角色: {{ roleInfo.roles.map(item=>item.roleName).join(',') }}
+        </p>
+        <p>修改角色: 
+          <el-select v-model="userRole" multiple placeholder="请选择">
+            <el-option
+              v-for="item in roles"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="roleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setRole"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -167,7 +195,7 @@ export default {
       queryParam: {
         query: '',
         pageNum: 1,
-        pageSize: 2,
+        pageSize: 5,
       },
       userList: [],
       total: 0,
@@ -197,6 +225,12 @@ export default {
         email: [{ validator: checkEmail, trigger: 'blur' }],
       },
       editForm: '',
+      roleDialogVisible: false,
+      roleInfo: {
+        roles:[]
+      },
+      roles: [],
+      userRole: ''
     }
   },
   created() {
@@ -289,6 +323,31 @@ export default {
           })
         })
     },
+    async showRoleDialog(user) {
+      
+      // 查询用户角色信息
+      const { data } = await this.$http.get(
+        '/role/user/detail' + '?userId=' + user.id
+      )
+      // 查询角色列表
+      if (!data.success) return this.$message.error('数据获取失败!')
+      this.roleInfo.userId = user.id
+      this.roleInfo.fullname = user.fullname
+      this.roleInfo.roles = data.data
+      this.roleDialogVisible = true
+
+      // 查询下拉框信息
+      const { data: res } = await this.$http.get('/role')
+      if (!res.success) return this.$message.error('数据获取失败')
+      this.roles = res.data
+      this.userRole = this.roleInfo.roles.map(data => data.id)
+    },
+    async setRole(){
+      this.roleDialogVisible = false
+      const {data} = await this.$http.post('/role/user',`userId=${this.roleInfo.userId}&roleIds=${this.userRole.join(',')}`)
+      if(!data.success) return this.$message.error('角色设置失败!')
+      this.$message.success('角色设置成功!')
+    }
   },
 }
 </script>
